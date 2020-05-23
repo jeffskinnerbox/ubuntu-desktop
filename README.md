@@ -1,6 +1,6 @@
 <!--
 Maintainer:   jeffskinnerbox@yahoo.com / www.jeffskinnerbox.me
-Version:      0.0.1
+Version:      0.0.2
 -->
 
 
@@ -51,6 +51,7 @@ Sources:
 ## Warning
 I had a wide range of problems
 (with folder synchrinzation, cut & paste, and other services)
+This appears to happen whe you [upgrade Vagrant or even change boxes][10].
 when my version of VirtualBox and its Guest Additions where not at the same level.
 Vagrant often doesn't like this and will result in things not working properly.
 If features are not working for you, check your VirtualBox and its Guest Additions version level.
@@ -64,6 +65,14 @@ Virtualbox on your host claims:   6.0.14
 VBoxService inside the vm claims: 5.1.38
 Going on, assuming VBoxService is correct...
 [default] GuestAdditions versions on your host (6.0.14) and guest (5.1.38) do not match.
+
+# run on host: more direct way to check virtualbox version
+$ virtualbox --help | head -n 1 | awk '{print $NF}'
+v6.0.14_Ubuntu
+
+# run on host: more direct way to check virtualbox guest additions version
+$ modinfo vboxguest | grep ^version | awk '{ print $2 }'
+5.1.38_Ubuntu
 ```
 
 As you can see, there is a version level differance.
@@ -71,7 +80,7 @@ To fix this, you must bring the VirtualBox Guest Addition up to the same version
 You can accomplish this with the following:
 
 ```bash
-# update virtualbox guest addition
+# run on host: update virtualbox guest addition
 vagrant vbguest
 
 # run on host: check on the status of virtualbox guest additions
@@ -79,14 +88,52 @@ $ vagrant vbguest --status
 [default] GuestAdditions 6.0.14 running --- OK.
 ```
 
+Try to add this plugin from the terminal:
+
+sudo vagrant plugin install vagrant-vbguest
+
+After installed and you do the 'vagrant up' it will detect the version between host and guest. If version doesn't match then it update the guest additions version accordingly.
+
+
+sudo apt-get install virtualbox-guest-additions-iso
+
 
 ----
 
 
 # Key Supporting Features
-The documentation below covers some the key features within the Vagrantfile.
+The documentation below covers some the key features within the Vagrantfile
+used to create this Ubuntu Desktop virtual machine.
 
-## Vagrant Ubuntu X Forwarding
+### GNOME Desktop
+To install the basic Gnome desktop environment, also known as the Vanilla desktop,
+you must do the the following:
+
+```bash
+# install vanilla GNOME desktop
+sudo apt install gnome-session
+
+# use the gdm3 login screen of Gnome desktop
+sudo update-alternatives --set gdm3.css /usr/share/gnome-shell/theme/Yaru/gnome-shell.css
+```
+/usr/share/gnome-shell/theme/gnome-shell.css
+
+To install the full GNOME desktop is by using the [`tasksel`][11] command.
+First ensure that the `tasksel` command is available on your system,
+and then do the desktop install:
+
+```bash
+# install full version of GNOME desktop
+sudo apt-get install -y tasksel
+sudo tasksel install ubuntu-desktop
+```
+
+Sources
+
+* [How to install Gnome on Ubuntu 20.04 LTS Focal Fossa](https://linuxconfig.org/how-to-install-gnome-on-ubuntu-20-04-lts-focal-fossa)
+* [How to install Vanilla Gnome Desktop on Ubuntu](https://vitux.com/how-to-install-vanilla-gnome-desktop-on-ubuntu/)
+
+### Vagrant Ubuntu X Forwarding
 The quickest and simplest thing to do to get a X Windows graphics program running
 is to use your Vagrant host as your [X Server][03] and let the Vagrant guest run the [X Client][04].
 Thanks to [X Forwarding][01], we can forward the output of graphical programs running
@@ -162,7 +209,7 @@ sources:
 * [X-forwarding to run GUI program in Vagrant box](https://code-maven.com/xforwarding-from-vagrant-box)
 * [How to enable and use SSH X11 Forwarding on Vagrant Instances](https://computingforgeeks.com/how-to-enable-and-use-ssh-x11-forwarding-on-vagrant-instances/)
 
-## Enabling Cut & Paste / Clipboard
+### Enabling Cut & Paste / Clipboard
 Your going to want to enable cut & paste between the host and gusest machines.
 Ths can be esily be accomplished via the following:
 
@@ -180,7 +227,7 @@ config.vm.provider "virtualbox" do |vb|
 end
 ```
 
-## Startup GUI Window Size
+### Startup GUI Window Size
 I find the default statup GUI window size poor and want to customize to my taste.
 In my case, I would like it to be 3/4ths of the size of my display monitor.
 
@@ -211,7 +258,7 @@ Source:
 
 * [Fixing a guest screen resolution in VirtualBox](https://superuser.com/questions/301464/fixing-a-guest-screen-resolution-in-virtualbox)
 
-## Connect to USB Device Through Vagrant
+### Connect to USB Device Through Vagrant
 Sometimes you need to connect a board or device to the
 Vagrant guest virtual machine via the hosts USB port.
 USB devices won't work in your guest until you can see them
@@ -281,7 +328,7 @@ Sources:
 * [Connect USB From Virtual Machine Using Vagrant and Virtual Box](https://sonnguyen.ws/connect-usb-from-virtual-machine-using-vagrant-and-virtualbox/)
 * [Connect a Usb device through Vagrant](http://code-chronicle.blogspot.com/2014/08/connect-usb-device-through-vagrant.html)
 
-## Synchronizing Folders/Files Across Guest & Host
+### Synchronizing Folders/Files Across Guest & Host
 Vagrant supports synchronizing folders/files between the host and guest machines.
 This will allow you to continue working on your project's files on your host machine,
 but also use the resources in the guest machine to edit, compile, or execute your project.
@@ -309,10 +356,10 @@ Sources:
 * [Synced Folders](https://www.vagrantup.com/docs/synced-folders/)
 * [How to enable two-way folder sync in Vagrant with VirtualBox?](https://stackoverflow.com/questions/34448717/how-to-enable-two-way-folder-sync-in-vagrant-with-virtualbox)
 
-## Custom Login and Development Environment
+### Custom Login and Development Environment
 This work has not started yet.
 
-## Making It All into a Base Box
+### Making It All into a Base Box
 This work has not started yet.
 
 Sources:
@@ -337,8 +384,8 @@ Sources:
 [07]:https://www.vagrantup.com/docs/boxes/base.html
 [08]:https://rollout.io/blog/immutable-deployments/
 [09]:https://askubuntu.com/questions/661414/how-to-install-virtualbox-extension-pack
-[10]:
-[11]:
+[10]:https://kvz.io/vagrant-tip-keep-virtualbox-guest-additions-in-sync.html
+[11]:http://manpages.ubuntu.com/manpages/focal/man8/tasksel.8.html
 [12]:
 [13]:
 [14]:

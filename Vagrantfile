@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 # Maintainer:   jeffskinnerbox@yahoo.com / www.jeffskinnerbox.me
-# Version:      0.0.1
+# Version:      0.0.2
 
 
 # Vagrantfile API/syntax version.  The "2" is the Vagrant configuration version.
@@ -13,10 +13,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Every Vagrant development environment requires a box
   # You can search for boxes at https://vagrantcloud.com/search
-  # config.vm.box = "ubuntu/eoan64"            # ubuntu 19.10 guest vm
-  # config.vm.hostname = "ubuntu-desktop.vm"   # set hostname
-  config.vm.box = "ubuntu/xenial64"          # ubuntu 16.04 guest vm
-  config.vm.hostname = "jetson-dev.vm"       # set hostname
+  config.vm.box = "ubuntu/eoan64"            # ubuntu 19.10 guest vm
+  config.vm.hostname = "ubuntu-desktop.vm"   # set hostname
+  #config.vm.box = "ubuntu/xenial64"          # ubuntu 16.04 guest vm
+  #config.vm.hostname = "jetson-dev.vm"       # set hostname
 
   # X forwarding support, using port 2222
   config.ssh.forward_agent = true        # if true, agent forwarding over SSH connections is enabled
@@ -28,9 +28,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.vbguest.auto_update = false
   end
 
-  # Admin user name and password
-  config.winrm.username = "vagrant"
-  config.winrm.password = "vagrant"
+  # admin user name and password
+  #config.winrm.username = "vagrant"
+  #config.winrm.password = "vagrant"
+
+  # time in seconds that vagrant will wait for the machine to boot and be accessible, default 300 sec
+  config.vm.boot_timeout = 500
 
   #config.vm.communicator = "ssh"         # change to 'winrm' for windows guest vm
 
@@ -148,14 +151,26 @@ SHELL
     # install virtualbox guest tools giving you healthy screen resolution, integrated mouse, etc.
     apt-get install -y build-essential virtualbox-guest-utils virtualbox-guest-x11 virtualbox-guest-dkms
 
-    # install full desktop (login: vagrant / password: vagrant)
-    add-apt-repository universe
-    add-apt-repository multiverse
-    apt-get install -y ubuntu-desktop
+#    # install full desktop (login: vagrant / password: vagrant)
+    #add-apt-repository universe
+    #add-apt-repository multiverse
+    #apt-get install -y ubuntu-desktop
+    ##apt-get install unity
 
-    # activate clipboard and drag & drop
-    VBoxClient --clipboard
-    VBoxClient --draganddrop
+    ## activate clipboard and drag & drop
+    #VBoxClient --clipboard
+    #VBoxClient --draganddrop
+
+#    # install vanilla version of Gnome desktop (login: vagrant / password: vagrant)
+    #apt-get install -y gnome-session gdm3
+
+    ## use the gdm3 login screen of Gnome desktop
+    #update-alternatives --set gdm3.css /usr/share/gnome-shell/theme/Yaru/gnome-shell.css
+
+    # install full version of GNOME desktop (login: vagrant / password: vagrant)
+    apt-get install -y tasksel
+    #tasksel install ubuntu-desktop
+    tasksel install --new-install ubuntu-desktop
 
     # make sure to do 'shutdown -r now' as the last step, so this takes effect
 SHELL
@@ -345,7 +360,7 @@ SHELL
   # ----------------------------------------------------------------------------
 
   # ------------- reboot to make sure everything is set (as root) --------------
-  config.vm.provision "shell", name: "reboot to make sure everything is set (as root)", run: "once", inline: <<-SHELL
+  config.vm.provision "shell", name: "reboot to make sure everything is setup (as root)", run: "once", inline: <<-SHELL
     shutdown -r now
 SHELL
 
