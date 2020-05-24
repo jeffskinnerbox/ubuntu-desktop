@@ -356,7 +356,11 @@ Sources:
 * [How to enable two-way folder sync in Vagrant with VirtualBox?](https://stackoverflow.com/questions/34448717/how-to-enable-two-way-folder-sync-in-vagrant-with-virtualbox)
 
 ### Custom Login and Development Environment
-This work has not started yet.
+Within the Vagrantfile's provisioning,
+I have include steps to create my login's working environment,
+X Windows, C, and Python development environment.
+Others will surely want to include their tools instead of mine here.
+Never the less, the Vagrantfile shows you how I choose to personalize my working environment.
 
 ### Making It All into a Base Box
 This work has not started yet.
