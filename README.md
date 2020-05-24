@@ -106,30 +106,29 @@ The documentation below covers some the key features within the Vagrantfile
 used to create this Ubuntu Desktop virtual machine.
 
 ### GNOME Desktop
-To install the basic Gnome desktop environment, also known as the Vanilla desktop,
-you must do the the following:
+I was hoping to install the basic Gnome desktop environment, also known as the Vanilla desktop,
+you could do the the following, but I [repeately ran into "purple screen" problem][12]:
 
 ```bash
 # install vanilla GNOME desktop
-sudo apt install gnome-session
+sudo apt-get install gnome-session
 
 # use the gdm3 login screen of Gnome desktop
 sudo update-alternatives --set gdm3.css /usr/share/gnome-shell/theme/Yaru/gnome-shell.css
 ```
-/usr/share/gnome-shell/theme/gnome-shell.css
 
-To install the full GNOME desktop is by using the [`tasksel`][11] command.
-First ensure that the `tasksel` command is available on your system,
-and then do the desktop install:
+So instead, I install the full GNOME desktop but did not use the [`tasksel`][11] command.
+In stead, I installed the desktop usig `apt-get` and avoid the "purple screen"
+for guest virtual machine with ubuntu 18.04 but not ubuntu 19.10:
 
 ```bash
 # install full version of GNOME desktop
-sudo apt-get install -y tasksel
-sudo tasksel install ubuntu-desktop
+sudo apt-get install -y ubuntu-desktop
 ```
 
 Sources
 
+* [Ubuntu Linux install Gnome desktop on server](https://www.cyberciti.biz/faq/ubuntu-linux-install-gnome-desktop-on-server/)
 * [How to install Gnome on Ubuntu 20.04 LTS Focal Fossa](https://linuxconfig.org/how-to-install-gnome-on-ubuntu-20-04-lts-focal-fossa)
 * [How to install Vanilla Gnome Desktop on Ubuntu](https://vitux.com/how-to-install-vanilla-gnome-desktop-on-ubuntu/)
 
@@ -386,7 +385,7 @@ Sources:
 [09]:https://askubuntu.com/questions/661414/how-to-install-virtualbox-extension-pack
 [10]:https://kvz.io/vagrant-tip-keep-virtualbox-guest-additions-in-sync.html
 [11]:http://manpages.ubuntu.com/manpages/focal/man8/tasksel.8.html
-[12]:
+[12]:https://askubuntu.com/questions/1114069/ubuntu-64-bit-stuck-on-the-purple-loading-screen-on-vm
 [13]:
 [14]:
 [15]:
