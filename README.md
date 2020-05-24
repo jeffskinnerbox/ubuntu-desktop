@@ -1,6 +1,6 @@
 <!--
 Maintainer:   jeffskinnerbox@yahoo.com / www.jeffskinnerbox.me
-Version:      0.0.2
+Version:      0.0.3
 -->
 
 
@@ -23,23 +23,23 @@ But what if we want to use Vagrant to run software that needs a GUI?
 Specifically, what if your want to run in Ubuntu a X Windows GUI application in your host's window
 (aka [X Forwarding][01])?
 What if you want to run a full [Ubuntu desktop environment][02]?
-An of course I would want to cut & paste accross the host and guest systems,
+An of course I would want to cut & paste across the host and guest systems,
 access external devices via the hosts USB ports,
 and share files between the host & guest virtual machine.
 How can this be done?
 
-The `Vagrantfile` in this repository is just such an implemenation
+The `Vagrantfile` in this repository is just such an implementation
 and is a working example for [Ubuntu 16.04 using the Gnome Desktop][06].
 
 Ultimately, I want to creating Ubuntu Desktop [Vagrant base box][07].
-The implmentation here isn't for a base box yet but it does have the Vagrantfile
+The implementation here isn't for a base box yet but it does have the Vagrantfile
 from which a base box could be created.
 Basically, this is the `Vagrantfile` to create a Vagrant virtual machine
 with a full Ubuntu GUI Desktop,
 along with X-Forwarding, cut & paste, USB port support,
 and disk file sharing.
 
-On top of this, I loadup the virtual machine with all the basic development envirnment tools
+On top of this, I loaded up the virtual machine with all the basic development environment tools
 I like to have on hand for any work I would do.
 
 Sources:
@@ -50,8 +50,8 @@ Sources:
 
 ## Warning
 I had a wide range of problems
-(with folder synchrinzation, cut & paste, and other services)
-This appears to happen whe you [upgrade Vagrant or even change boxes][10].
+(with folder synchronization, cut & paste, and other services)
+This appears to happen when you [upgrade Vagrant or even change boxes][10]
 when my version of VirtualBox and its Guest Additions where not at the same level.
 Vagrant often doesn't like this and will result in things not working properly.
 If features are not working for you, check your VirtualBox and its Guest Additions version level.
@@ -75,7 +75,7 @@ $ modinfo vboxguest | grep ^version | awk '{ print $2 }'
 5.1.38_Ubuntu
 ```
 
-As you can see, there is a version level differance.
+As you can see, there is a version level difference.
 To fix this, you must bring the VirtualBox Guest Addition up to the same version level as VirtualBox.
 You can accomplish this with the following:
 
@@ -107,7 +107,7 @@ used to create this Ubuntu Desktop virtual machine.
 
 ### GNOME Desktop
 I was hoping to install the basic Gnome desktop environment, also known as the Vanilla desktop,
-you could do the the following, but I [repeately ran into "purple screen" problem][12]:
+you could do the following, but I [repeatedly ran into "purple screen" problem][12]:
 
 ```bash
 # install vanilla GNOME desktop
@@ -118,7 +118,7 @@ sudo update-alternatives --set gdm3.css /usr/share/gnome-shell/theme/Yaru/gnome-
 ```
 
 So instead, I install the full GNOME desktop but did not use the [`tasksel`][11] command.
-In stead, I installed the desktop usig `apt-get` and avoid the "purple screen"
+In stead, I installed the desktop using `apt-get` and avoid the "purple screen"
 for guest virtual machine with ubuntu 18.04 but not ubuntu 19.10:
 
 ```bash
@@ -202,15 +202,15 @@ ssh vagrant@localhost -X -p 2222 -i /home/jeff/src/vagrant-machines/jetson-dev/.
 xeyes
 ```
 
-sources:
+Sources:
 
 * [Run graphical programs within Vagrantboxes](https://coderwall.com/p/ozhfva/run-graphical-programs-within-vagrantboxes)
 * [X-forwarding to run GUI program in Vagrant box](https://code-maven.com/xforwarding-from-vagrant-box)
 * [How to enable and use SSH X11 Forwarding on Vagrant Instances](https://computingforgeeks.com/how-to-enable-and-use-ssh-x11-forwarding-on-vagrant-instances/)
 
 ### Enabling Cut & Paste / Clipboard
-Your going to want to enable cut & paste between the host and gusest machines.
-Ths can be esily be accomplished via the following:
+Your going to want to enable cut & paste between the host and guest machines.
+This can be easily be accomplished via the following:
 
 ```ruby
 config.vm.provider "virtualbox" do |vb|
@@ -227,8 +227,8 @@ end
 ```
 
 ### Startup GUI Window Size
-I find the default statup GUI window size poor and want to customize to my taste.
-In my case, I would like it to be 3/4ths of the size of my display monitor.
+I find the default startup GUI window size poor and want to customize to my taste.
+In my case, I would like it to be 3/4 of the size of my display monitor.
 
 To get my monitor size, I used this:
 
@@ -238,7 +238,7 @@ $ xdpyinfo | grep dimensions
   dimensions:    1920x1200 pixels (508x317 millimeters)
 ```
 
-With this informantion, set the size of the GUI in the Vagrantfile:
+With this information, set the size of the GUI in the Vagrantfile:
 
 ```ruby
 config.vm.provider "virtualbox" do |vb|
@@ -325,7 +325,7 @@ lsusb
 Sources:
 
 * [Connect USB From Virtual Machine Using Vagrant and Virtual Box](https://sonnguyen.ws/connect-usb-from-virtual-machine-using-vagrant-and-virtualbox/)
-* [Connect a Usb device through Vagrant](http://code-chronicle.blogspot.com/2014/08/connect-usb-device-through-vagrant.html)
+* [Connect a USB device through Vagrant](http://code-chronicle.blogspot.com/2014/08/connect-usb-device-through-vagrant.html)
 
 ### Synchronizing Folders/Files Across Guest & Host
 Vagrant supports synchronizing folders/files between the host and guest machines.
@@ -346,7 +346,7 @@ end
 ```
 
 >**NOTE:** By default, Vagrant will share your host's project directory
->(i.e. the directory containing the `Vagrantfile`) to `/vagrant` on the guest virtual machine.
+>(i.e. The directory containing the `Vagrantfile`) to `/vagrant` on the guest virtual machine.)
 
 >**NOTE:** Vagrant can't share symbolically linked files.
 
@@ -386,11 +386,3 @@ Sources:
 [10]:https://kvz.io/vagrant-tip-keep-virtualbox-guest-additions-in-sync.html
 [11]:http://manpages.ubuntu.com/manpages/focal/man8/tasksel.8.html
 [12]:https://askubuntu.com/questions/1114069/ubuntu-64-bit-stuck-on-the-purple-loading-screen-on-vm
-[13]:
-[14]:
-[15]:
-[16]:
-[17]:
-[18]:
-[19]:
-[20]:
