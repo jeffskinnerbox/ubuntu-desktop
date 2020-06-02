@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 # Maintainer:   jeffskinnerbox@yahoo.com / www.jeffskinnerbox.me
-# Version:      0.0.3
+# Version:      0.0.4
 
 
 # Vagrantfile API/syntax version.  The "2" is the Vagrant configuration version.
@@ -20,7 +20,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #config.vm.hostname = "jetson-dev.vm"       # set hostname
 
   # set the disk size to be allocated
-  #config.disksize.size = "150GB"
+  config.disksize.size = "15GB"
 
   # X forwarding support, using port 2222
   config.ssh.forward_agent = true        # if true, agent forwarding over SSH connections is enabled
@@ -50,7 +50,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # via 127.0.0.1 to disable public access
   #config.vm.network "forwarded_port", guest: 8888, host: 8888, host_ip: "127.0.0.1" # port for jupyter notebook
 
-  # Create a private network, which allows host-only access to the machine
+ # Create a private network, which allows host-only access to the machine
   #config.vm.network "private_network", type: "dhcp"           # DHCP assigned ip address
   config.vm.network "private_network", ip: "192.168.10.222"   # static ip addess
 

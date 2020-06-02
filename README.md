@@ -1,6 +1,6 @@
 <!--
 Maintainer:   jeffskinnerbox@yahoo.com / www.jeffskinnerbox.me
-Version:      0.0.3
+Version:      0.0.4
 -->
 
 
@@ -299,8 +299,8 @@ config.vm.provider "virtualbox" do |vb|
    .
    .
     # enable USB and add a filter based on the desired device manufacturer / product
-    vb.customize ["modifyvm", :id, "--usb", "on"]
-    vb.customize ["modifyvm", :id, "--usbehci", "on"]
+    vb.customize ["modifyvm", :id, "--usbehci", "on"]       # usb 2.0 (EHCI) controller
+    vb.customize ["modifyvm", :id, "--usbxhci", "on"]       # usb 3.0 (xHCI) controller
     vb.customize ['usbfilter', 'add', '0', '--target', :id,
         '--name', 'QuickCam Orbit/Sphere AF',
         '--vendorid', '0x046d',
@@ -354,6 +354,25 @@ Sources:
 
 * [Synced Folders](https://www.vagrantup.com/docs/synced-folders/)
 * [How to enable two-way folder sync in Vagrant with VirtualBox?](https://stackoverflow.com/questions/34448717/how-to-enable-two-way-folder-sync-in-vagrant-with-virtualbox)
+
+### Disk Space
+```ruby
+Vagrant.configure(2) do |config|
+  ...
+  # set the disk size to be allocated
+  config.disksize.size = "15GB"
+end
+```
+
+### Private Network
+```ruby
+Vagrant.configure(2) do |config|
+  ...
+ # Create a private network, which allows host-only access to the machine
+  #config.vm.network "private_network", type: "dhcp"           # DHCP assigned ip address
+  config.vm.network "private_network", ip: "192.168.10.222"   # static ip addess
+end
+```
 
 ### Custom Login and Development Environment
 Within the Vagrantfile's provisioning,
