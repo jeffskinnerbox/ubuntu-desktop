@@ -19,6 +19,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.hostname = "ubuntu-desktop.vm"   # set hostname
   #config.vm.hostname = "jetson-dev.vm"       # set hostname
 
+  # set the disk size to be allocated
+  #config.disksize.size = "150GB"
+
   # X forwarding support, using port 2222
   config.ssh.forward_agent = true        # if true, agent forwarding over SSH connections is enabled
   config.ssh.forward_x11 = true          # if true, X11 forwarding over SSH connections is enabled
@@ -40,7 +43,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # NOTE: This will enable public access to the opened port
-  #config.vm.network "forwarded_port", guest: 80, host: 8080                         # port for web server 
+  #config.vm.network "forwarded_port", guest: 80, host: 8080       # port for web server
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
@@ -48,14 +51,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #config.vm.network "forwarded_port", guest: 8888, host: 8888, host_ip: "127.0.0.1" # port for jupyter notebook
 
   # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
+  #config.vm.network "private_network", type: "dhcp"           # DHCP assigned ip address
+  config.vm.network "private_network", ip: "192.168.10.222"   # static ip addess
+
 
   # Create a public network, which generally matched to bridged network.
-  # Bridged networks make the machine appear as another physical device on
-  # your network.
-  # config.vm.network "public_network"   # DHCP assigned ip address
-  # config.vm.network "public_network", ip: "192.168.33.10"
+  # Bridged networks make the machine appear as another physical device on your network.
+  # config.vm.network "public_network"                        # DHCP assigned ip address
+  #$def_net = `ip route | grep -E "^default" | awk '{printf "%s", $5; exit 0}'`    # default network interface
+  #config.vm.network "public_network",  bridge: "#$def_net", ip: "192.168.1.222"   # static ip addess
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
@@ -82,8 +86,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize ['setextradata', :id, 'GUI/LastGuestSizeHint','1440,900']
 
     # enable USB and add a filter based on the desired device manufacturer / product
-    vb.customize ["modifyvm", :id, "--usb", "on"]
-    vb.customize ["modifyvm", :id, "--usbehci", "on"]
+    #vb.customize ["modifyvm", :id, "--usb", "on"]           # usb 1.1 (CHCI) controller
+    vb.customize ["modifyvm", :id, "--usbehci", "on"]       # usb 2.0 (EHCI) controller
+    vb.customize ["modifyvm", :id, "--usbxhci", "on"]       # usb 3.0 (xHCI) controller
     vb.customize ['usbfilter', 'add', '0', '--target', :id,
         '--name', 'QuickCam Orbit/Sphere AF',
         '--vendorid', '0x046d',
