@@ -324,6 +324,7 @@ lsusb
 
 Sources:
 
+* [How To Pass Through USB Devices To Guests On An Ubuntu 8.10 Host](https://www.howtoforge.com/virtualbox-2-how-to-pass-through-usb-devices-to-guests-on-an-ubuntu-8.10-host)
 * [Connect USB From Virtual Machine Using Vagrant and Virtual Box](https://sonnguyen.ws/connect-usb-from-virtual-machine-using-vagrant-and-virtualbox/)
 * [Connect a USB device through Vagrant](http://code-chronicle.blogspot.com/2014/08/connect-usb-device-through-vagrant.html)
 
