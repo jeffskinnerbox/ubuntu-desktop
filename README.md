@@ -1,6 +1,6 @@
 <!--
 Maintainer:   jeffskinnerbox@yahoo.com / www.jeffskinnerbox.me
-Version:      0.0.4
+Version:      0.0.5
 -->
 
 
@@ -102,7 +102,7 @@ sudo apt-get install virtualbox-guest-additions-iso
 
 
 # Key Supporting Features
-The documentation below covers some the key features within the Vagrantfile
+The section below covers some the key features within the Vagrantfile
 used to create this Ubuntu Desktop virtual machine.
 
 ### GNOME Desktop
@@ -400,8 +400,41 @@ X Windows, C, and Python development environment.
 Others will surely want to include their tools instead of mine here.
 Never the less, the Vagrantfile shows you how I choose to personalize my working environment.
 
-### Making It All into a Base Box
-This work has not started yet.
+
+-----
+
+
+# Tools Used to Create Base Box
+
+## Packer (Not Needed)
+The creation of a Vagrant box starts with the creation of VM using virtualization tool like VirtualBox.
+This is often a manual process, using a GUI or CLI,
+and is very different for all the virtualization tools on the market (e.g. VitrualBox, VMWare, etc.).
+Unfortunately, this doesn't fit the modern paradigm of [infrastructure as code][14].
+
+To overcome this, the creates of Vagrant, [HasiCorp][15], offer a tool called [Packer][16].
+[Why Use Packer][20]?
+Packer embraces modern configuration management automates the creation of any type of machine image.
+Packer is an open source tool for creating identical 'machine images'
+for multiple virtualization tools from a single source configuration.
+Packer runs on every major operating system, and creates machine images for multiple platforms in parallel.
+Packer does not replace [configuration management][17] tools like Ansible, Chef, or Puppet.
+In fact, when building images,
+Packer is able to use configuration management tools to install software onto the image.
+Packer lets you build Virtual Machine images for different providers from one JSON file.
+You can use the same file and commands to build an image on AWS, Digital Ocean VirtualBox and Vagrant.
+This makes it possible to use exactly the same system for development which you then create in production.
+
+
+----
+
+
+# Building Vagrant Ubuntu GUI Desktop Base Box
+Vagrant base boxes are prepackaged environments that are the foundation of Vagrant
+and you typically find them at place like [Vagrant Cloud][18].
+In most cases, this is usually just a stripped and naked operating system such as Ubuntu.
+My mission here is to take just such a base box, add what is need to make it my
+Ubuntu GUI Desktop envirnment, and covert this into a new base box for my use.
 
 Sources:
 
@@ -409,10 +442,188 @@ Sources:
 * [How to Create a Vagrant Base Box from an Existing One](https://scotch.io/tutorials/how-to-create-a-vagrant-base-box-from-an-existing-one)
 * [Create a Vagrant Base Box (VirtualBox)](https://oracle-base.com/articles/vm/create-a-vagrant-base-box-virtualbox)
 * [Building Custom Vagrant box](https://medium.com/@gajbhiyedeepanshu/building-custom-vagrant-box-e6a846b6baca)
-* [Using Packer and Vagrant to Build Virtual Machines](https://rollout.io/blog/packer-vagrant-tutorial/)
-* [Using Packer and Vagrant to Build Virtual Machines](https://blog.codeship.com/packer-vagrant-tutorial/)
-* [How to Install and use Packer on Ubuntu 18.04](https://computingforgeeks.com/how-to-install-and-use-packer/)
-* [Packer Tutorial For Beginners – Automate AMI Creation](https://devopscube.com/packer-tutorial-for-beginners/)
+
+>**NOTE:** The task of our base box is made much easier since we are using Vagrant to start with.
+>The creation of a Vagrant box starts with the creation of VM using virtualization tool like VirtualBox.
+>This is often a manual process, using a GUI or CLI,
+>and is very different for all the virtualization tools on the market (e.g. VitrualBox, VMWare, etc.).
+>Unfortunately, this doesn't fit the modern paradigm of [infrastructure as code][14].
+>
+>To overcome this, the creates of Vagrant, [HasiCorp][15], offer a tool called [Packer][16].
+>[Why Use Packer][20]?
+>Packer embraces modern configuration management automates the creation of any type of machine image.
+>Packer is an open source tool for creating identical 'machine images'
+>for multiple virtualization tools from a single source configuration.
+>Packer runs on every major operating system, and creates machine images for multiple platforms in parallel.
+>Packer does not replace [configuration management][17] tools like Ansible, Chef, or Puppet.
+>In fact, when building images,
+>Packer is able to use configuration management tools to install software onto the image.
+>Packer lets you build Virtual Machine images for different providers from one JSON file.
+>You can use the same file and commands to build an image on AWS, Digital Ocean VirtualBox and Vagrant.
+>This makes it possible to use exactly the same system for development which you then create in production.
+
+
+
+
+############################# NOT NEEDED #######################################
+### Step X: Installing Packer
+Packer is likely to be the least fimilar of the required tools,
+so here is a short installation tutorial ([source][26]).
+Packer may be installed from a pre-compiled binary or from source.
+The easy and recommended method for all users is binary installation method.
+Check the latest release of Packer on the [Downloads page][19].
+Then download the recent version for your platform.
+In my case:
+
+```bash
+# download version 1.5.1  for ubuntu
+cd ~/tmp
+export VER="1.5.1"
+wget https://releases.hashicorp.com/packer/${VER}/packer_${VER}_linux_amd64.zip
+
+# uncompress the download file
+unzip packer_${VER}_linux_amd64.zip
+
+# move the packer binary into your path
+sudo mv packer /usr/local/bin
+
+# verify the install is working
+$ packer --help
+Usage: packer [--version] [--help] <command> [<args>]
+
+Available commands are:
+    build       build image(s) from template
+    console     creates a console for testing variable interpolation
+    fix         fixes templates from old versions of packer
+    inspect     see components of a template
+    validate    check that a template is valid
+    version     Prints the Packer version
+```
+
+Packer uses builders (sometimes called a template)
+to generate images and create machines for various platforms from templates.
+A builder is a configuration file used to define what image is built and its format is JSON.
+You can see a [full list of supported builders and their templates][22].
+A builder has the following three main parts.
+
+1. **variables** – Where you define custom variables.
+2. **builders** – Where you mention all the required builder parameters.
+3. **provisioners** – Where you can integrate a shell script,
+ansible play or a chef cookbook for configuring a required application.
+
+## Step 6: Build the Vagrant Box Using Packer
+Now, start the build process using Packer to create a Vagrant box:
+
+```bash
+# build the vagrant box using purchased physical version of ms windows 10 pro
+packer build --only=virtualbox-iso -var 'iso_url=./iso/windows-10-pro-020120.iso' -var 'iso_checksum=5a8969afcf5c49faf3d8f7f0bddfd5517453248dec47f125a61c93f538d08625' windows_10.json
+
+# OR - assuming you updated the script
+#./build_windows_10.sh
+```
+
+The building of the Windows 10 OS will take several hours (its Microsoft after all).
+You'll know when the Packer build is complete when the script terminate
+and trace messages  are no long printed.
+
+>**NOTE:** Early in the boot-up of the VirtualBox,
+>I get prompted for "Select the operating system you want to install"
+>and a menu from the MS Windows install script.
+>Appears there is a missing response in the
+>`~/src/vagrant-machines/ms-windows/answer_files/10` file.
+
+## Step 7: Build the Vagrant Box
+Now that `packer` has completed building the box,
+next we want to make this box available for use by adding it to our list of available boxes.
+The follow commands adds the new box to the list of currently available boxes.
+
+```bash
+# install the vagrant box in your local repository
+#vagrant box add windows10base ./windows_10_virtualbox.box
+vagrant box add --name windows10base ./windows_10_virtualbox.box
+
+# check to see the box is in the local repository
+vagrant box list
+
+# remove the built box now that its in the repository
+rm windows_10_virtualbox.box
+```
+
+Now you have the box and you can use it like any other box
+by referencing it in a `Vagrantfile` for a new build.
+
+If you wise to remove the box from the local repository,
+use the command `vagrant box remove windows10base`.
+############################# NOT NEEDED #######################################
+
+## Step 1: Build You Box Using Vagrant
+First step is to create your box destine to become your new base box via Vagrant.
+The Vagrantfile used to create it is in this repository.
+
+```ruby
+# build the box
+vagrant up
+```
+
+We now SSH into the box and do any customizing required of it.
+We're also going to clean up disk space on the VM
+so when we package it into a new Vagrant box, it's as clean as possible.
+
+```bash
+# do any required customization
+
+# remove APT cache
+sudo apt-get clean
+
+# "zero out" the drive (this is for Ubuntu)
+sudo dd if=/dev/zero of=/EMPTY bs=1M
+sudo rm -f /EMPTY
+
+# clear the bash history
+cat /dev/null > ~/.bash_history && history -c
+```
+
+## Step X: Repackage the VM into a New Vagrant Base Box
+We are going to repackage the server we just created into a new Vagrant Base Box.
+
+```bash
+# create the new box
+vagrant package --output ubuntu-desktop.box
+
+# install the vagrant box in your local repository
+vagrant box add --name ubuntu-desktop ./ubuntu-desktop.box
+
+# check to see the box is in the local repository
+vagrant box list
+
+# remove the built box now that its in the repository
+rm ubuntu-desktop.box
+
+# your vm is nolong needed
+vagrant destroy
+```
+
+Now you have the box and you can use it like any other box
+by referencing it in a `Vagrantfile` for a new build.
+
+If you wise to remove the box from the local repository,
+use the command `vagrant box remove ubuntu-desktop`.
+
+## Step X: Test the Build
+Now lets test if the newly created Vagrant box in fact works.
+You can login into the VM using “vagrant” as user name and “vagrant” as a password,
+but first we need to initialize our test environment:
+
+```bash
+# create your test environment
+mkcd ~/tmp/test-ubuntu-desktop
+
+# initialize the vagrant environment
+vagrant init ubuntu-desktop
+
+# bring up the vm (first issues will take long time, in typical Microsoft fashion)
+vagrant up
+```
 
 
 
@@ -429,3 +640,30 @@ Sources:
 [11]:http://manpages.ubuntu.com/manpages/focal/man8/tasksel.8.html
 [12]:https://askubuntu.com/questions/1114069/ubuntu-64-bit-stuck-on-the-purple-loading-screen-on-vm
 [13]:https://github.com/sprotheroe/vagrant-disksize
+[14]:https://en.wikipedia.org/wiki/Infrastructure_as_code
+[15]:https://www.hashicorp.com/
+[16]:https://www.packer.io/
+[17]:https://www.ansible.com/use-cases/configuration-management
+[18]:https://app.vagrantup.com/boxes/search
+[19]:https://packer.io/downloads.html
+[20]:https://www.packer.io/intro/why.html
+[21]:
+[22]:
+[23]:
+[24]:
+[25]:
+[26]:
+[27]:
+[28]:
+[29]:
+[30]:
+[31]:
+[32]:
+[33]:
+[34]:
+[35]:
+[36]:
+[37]:
+[38]:
+[39]:
+[40]:
