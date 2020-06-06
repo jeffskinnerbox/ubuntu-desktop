@@ -319,7 +319,13 @@ starting your virtual machine see if you can detect the device:
 vagrant up
 
 # on the guest, check for the device
-lsusb
+$ lsusb
+Bus 001 Device 002: ID 046d:0994 Logitech, Inc. QuickCam Orbit/Sphere AF
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 002 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+
+# use cheese to access camera (didn't work ... old camera)
+cheese -d /dev/bus/usb/001/001
 ```
 
 Sources:
@@ -356,14 +362,26 @@ Sources:
 * [Synced Folders](https://www.vagrantup.com/docs/synced-folders/)
 * [How to enable two-way folder sync in Vagrant with VirtualBox?](https://stackoverflow.com/questions/34448717/how-to-enable-two-way-folder-sync-in-vagrant-with-virtualbox)
 
-### Disk Space
+### Set Desired Disk Size
+The [`vagrant-disksize` plugin][13] can help you configure the disk storage your application needs.
+Default disk storage is 10G.
+You can install the plugin with `vagrant plugin install vagrant-disksize`.
+
+To request the disk size of your choose, use the following in your Vagrantfile:
+
 ```ruby
-Vagrant.configure(2) do |config|
-  ...
-  # set the disk size to be allocated
-  config.disksize.size = "15GB"
+Vagrant.configure('2') do |config|
+  config.vm.box = "ubuntu/xenial64"          # ubuntu 16.04 guest vm
+  config.disksize.size = "30GB"              # set the desired disk sized
 end
 ```
+
+Sources:
+
+* [How to increase disk size on a Vagrant VM using VirtualBox?](https://medium.com/@thucnc/how-to-increase-disk-size-on-a-vagrant-vm-using-virtualbox-c3d24acee3f4)
+* [Resize Hard Disk of a Vagrant box](https://nmrony.info/change-disk-size-of-a-vagrant-box/)
+* [vagrant-disksize](https://github.com/sprotheroe/vagrant-disksize)
+
 
 ### Private Network
 ```ruby
@@ -410,3 +428,4 @@ Sources:
 [10]:https://kvz.io/vagrant-tip-keep-virtualbox-guest-additions-in-sync.html
 [11]:http://manpages.ubuntu.com/manpages/focal/man8/tasksel.8.html
 [12]:https://askubuntu.com/questions/1114069/ubuntu-64-bit-stuck-on-the-purple-loading-screen-on-vm
+[13]:https://github.com/sprotheroe/vagrant-disksize

@@ -14,10 +14,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Every Vagrant development environment requires a box
   # You can search for boxes at https://vagrantcloud.com/search
   #config.vm.box = "ubuntu/xenial64"          # ubuntu 16.04 guest vm
-  config.vm.box = "ubuntu/bionic64"          # ubuntu 18.04 guest vm
   #config.vm.box = "ubuntu/eoan64"            # ubuntu 19.10 guest vm
+  config.vm.box = "ubuntu/bionic64"          # ubuntu 18.04 guest vm
   config.vm.hostname = "ubuntu-desktop.vm"   # set hostname
-  #config.vm.hostname = "jetson-dev.vm"       # set hostname
 
   # set the disk size to be allocated
   config.disksize.size = "15GB"
@@ -33,7 +32,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # time in seconds that vagrant will wait for the machine to boot and be accessible, default 300 sec
-  config.vm.boot_timeout = 500
+  config.vm.boot_timeout = 300
 
   # If set to 'false', boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -57,15 +56,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on your network.
-  # config.vm.network "public_network"                        # DHCP assigned ip address
-  #$def_net = `ip route | grep -E "^default" | awk '{printf "%s", $5; exit 0}'`    # default network interface
-  #config.vm.network "public_network",  bridge: "#$def_net", ip: "192.168.1.222"   # static ip addess
+  #$def_net = `ip route | grep -E "^default" | awk '{printf "%s", $5; exit 0}'`   # default network interface
+  #config.vm.network "public_network", bridge: "#$def_net", ip: "192.168.1.218"   # static ip addess
+  config.vm.network "public_network"                                             # DHCP assigned ip address
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder "shared-data/", "/home/vagrant/shared-data", create: true, type: "virtualbox", :mount_options => ["dmode=777", "fmode=666"]
+  #config.vm.synced_folder "shared-data/", "/home/vagrant/shared-data", create: true, type: "virtualbox", :mount_options => ["dmode=777", "fmode=666"]
 
   # customize the configuration of VM - see https://www.virtualbox.org/manual/ch08.html
   # virtual hardware configuration
