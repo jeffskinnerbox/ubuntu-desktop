@@ -50,15 +50,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #config.vm.network "forwarded_port", guest: 8888, host: 8888, host_ip: "127.0.0.1" # port for jupyter notebook
 
  # Create a private network, which allows host-only access to the machine
+  #config.vm.network "private_network", ip: "192.168.10.222"   # static ip addess
   #config.vm.network "private_network", type: "dhcp"           # DHCP assigned ip address
-  config.vm.network "private_network", ip: "192.168.10.222"   # static ip addess
-
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on your network.
-  #$def_net = `ip route | grep -E "^default" | awk '{printf "%s", $5; exit 0}'`   # default network interface
+  $def_net = `ip route | grep -E "^default" | awk '{printf "%s", $5; exit 0}'`   # default network interface
   #config.vm.network "public_network", bridge: "#$def_net", ip: "192.168.1.218"   # static ip addess
-  config.vm.network "public_network"                                             # DHCP assigned ip address
+  config.vm.network "public_network", bridge: "#$def_net"                        # DHCP assigned ip address
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
