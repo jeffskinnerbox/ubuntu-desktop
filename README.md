@@ -556,7 +556,7 @@ If you wise to remove the box from the local repository,
 use the command `vagrant box remove windows10base`.
 ############################# NOT NEEDED #######################################
 
-## Step 1: Build You Box Using Vagrant
+## Step 1: Build You Box Using Vagrant - DONE
 First step is to create your box destine to become your new base box via Vagrant.
 The Vagrantfile used to create it is in this repository.
 
@@ -581,6 +581,9 @@ sudo rm -f /EMPTY
 
 # clear the bash history
 cat /dev/null > ~/.bash_history && history -c
+
+# shutdown the vm
+sudo shutdown -h now
 ```
 
 ## Step X: Repackage the VM into a New Vagrant Base Box
