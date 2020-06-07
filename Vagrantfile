@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 # Maintainer:   jeffskinnerbox@yahoo.com / www.jeffskinnerbox.me
-# Version:      0.0.5
+# Version:      0.0.6
 
 
 # Vagrantfile API/syntax version.  The "2" is the Vagrant configuration version.
