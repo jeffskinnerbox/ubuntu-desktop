@@ -1,4 +1,4 @@
-!--
+<!--
 Maintainer:   jeffskinnerbox@yahoo.com / www.jeffskinnerbox.me
 Version:      0.0.7
 -->
@@ -10,12 +10,6 @@ Version:      0.0.7
 
 
 ----
-
-* [Vagrant Box Templates](https://everythingshouldbevirtual.com/virtualization/vagrant-box-templates/)
-* [How do I install a Vagrant Linux box that has a GUI (gnome, kde, …)?](https://stackoverflow.com/questions/31845472/how-do-i-install-a-vagrant-linux-box-that-has-a-gui-gnome-kde)
-* [Using vagrant to run virtual machines with desktop environment](https://stackoverflow.com/questions/18878117/using-vagrant-to-run-virtual-machines-with-desktop-environment)
-* [Virtualbox: install guest additions on Ubuntu 20.04 LTS Focal Fossa](https://linuxconfig.org/virtualbox-install-guest-additions-on-ubuntu-20-04-lts-focal-fossa)
-
 
 
 # Vagrant Ubuntu GUI Desktop
@@ -53,6 +47,10 @@ Sources:
 * [How to install a Full Desktop (GUI) on Ubuntu Server](https://www.youtube.com/watch?v=rWyWt3DR9Fs)
 * [Adding a GUI to a Debian Vagrant box](https://shanemcd.org/2018/12/16/adding-a-gui-to-a-debian-vagrant-box/)
 * [Using vagrant to run virtual machines with desktop environment](https://stackoverflow.com/questions/18878117/using-vagrant-to-run-virtual-machines-with-desktop-environment)
+* [Vagrant Box Templates](https://everythingshouldbevirtual.com/virtualization/vagrant-box-templates/)
+* [How do I install a Vagrant Linux box that has a GUI (gnome, kde, …)?](https://stackoverflow.com/questions/31845472/how-do-i-install-a-vagrant-linux-box-that-has-a-gui-gnome-kde)
+* [Using vagrant to run virtual machines with desktop environment](https://stackoverflow.com/questions/18878117/using-vagrant-to-run-virtual-machines-with-desktop-environment)
+* [Virtualbox: install guest additions on Ubuntu 20.04 LTS Focal Fossa](https://linuxconfig.org/virtualbox-install-guest-additions-on-ubuntu-20-04-lts-focal-fossa)
 
 ## Warning
 I had a wide range of problems
@@ -110,7 +108,7 @@ With this, hopefully you get a working VM.
 ----
 
 
-# Key Supporting Features
+# Key Supported Features
 The section below covers some the key features within the Vagrantfile
 used to create this Ubuntu Desktop virtual machine.
 
@@ -204,7 +202,7 @@ and run a X11 program on the Vagrant guest but displayed on the Vagrant host,
 as shown below:
 
 ```bash
-# make sure your in the relavent directory
+# make sure your in the relevant directory
 cd ~/src/vagrant-machines/jetson-dev
 
 # login to the guest VM via ssh with x forwarding
@@ -446,7 +444,7 @@ Vagrant base boxes are prepackaged environments that are the foundation of Vagra
 and you typically find them at place like [Vagrant Cloud][18].
 In most cases, this is usually just a stripped and naked operating system such as Ubuntu.
 My mission here is to take just such a base box, add what is need to make it my
-Ubuntu GUI Desktop envirnment, and covert this into a new base box for my use.
+Ubuntu GUI Desktop environment, and covert this into a new base box for my use.
 
 Sources:
 
@@ -520,7 +518,7 @@ vagrant box list
 # remove the built box now that its in the repository
 rm ubuntu-desktop.box
 
-# your vm is nolong needed
+# your vm is no long needed
 vagrant destroy
 ```
 
