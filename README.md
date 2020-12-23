@@ -1,6 +1,6 @@
-<!--
+!--
 Maintainer:   jeffskinnerbox@yahoo.com / www.jeffskinnerbox.me
-Version:      0.0.6
+Version:      0.0.7
 -->
 
 
@@ -10,6 +10,12 @@ Version:      0.0.6
 
 
 ----
+
+* [Vagrant Box Templates](https://everythingshouldbevirtual.com/virtualization/vagrant-box-templates/)
+* [How do I install a Vagrant Linux box that has a GUI (gnome, kde, …)?](https://stackoverflow.com/questions/31845472/how-do-i-install-a-vagrant-linux-box-that-has-a-gui-gnome-kde)
+* [Using vagrant to run virtual machines with desktop environment](https://stackoverflow.com/questions/18878117/using-vagrant-to-run-virtual-machines-with-desktop-environment)
+* [Virtualbox: install guest additions on Ubuntu 20.04 LTS Focal Fossa](https://linuxconfig.org/virtualbox-install-guest-additions-on-ubuntu-20-04-lts-focal-fossa)
+
 
 
 # Vagrant Ubuntu GUI Desktop
@@ -55,6 +61,7 @@ This appears to happen when you [upgrade Vagrant or even change boxes][10]
 when my version of VirtualBox and its Guest Additions where not at the same level.
 Vagrant often doesn't like this and will result in things not working properly.
 If features are not working for you, check your VirtualBox and its Guest Additions version level.
+
 You can detect this inconsistency via the following commands:
 
 ```bash
@@ -66,6 +73,14 @@ VBoxService inside the vm claims: 5.1.38
 Going on, assuming VBoxService is correct...
 [default] GuestAdditions versions on your host (6.0.14) and guest (5.1.38) do not match.
 
+# also got the following error at times
+$ vagrant vbguest --status
+[default] A Virtualbox Guest Additions installation was found but no tools to rebuild or start them.
+```
+
+Another potential way to spot inconsistencies is the following:
+
+```bash
 # run on host: more direct way to check virtualbox version
 $ virtualbox --help | head -n 1 | awk '{print $NF}'
 v6.0.14_Ubuntu
@@ -88,14 +103,8 @@ $ vagrant vbguest --status
 [default] GuestAdditions 6.0.14 running --- OK.
 ```
 
-Try to add this plugin from the terminal:
-
-sudo vagrant plugin install vagrant-vbguest
-
-After installed and you do the 'vagrant up' it will detect the version between host and guest. If version doesn't match then it update the guest additions version accordingly.
-
-
-sudo apt-get install virtualbox-guest-additions-iso
+Rebuild your VM (i.e. `vagrant destroy`, followed by `vagrant up`).
+With this, hopefully you get a working VM.
 
 
 ----
@@ -195,8 +204,11 @@ and run a X11 program on the Vagrant guest but displayed on the Vagrant host,
 as shown below:
 
 ```bash
+# make sure your in the relavent directory
+cd ~/src/vagrant-machines/jetson-dev
+
 # login to the guest VM via ssh with x forwarding
-ssh vagrant@localhost -X -p 2222 -i /home/jeff/src/vagrant-machines/jetson-dev/.vagrant/machines/default/virtualbox/private_key
+ssh vagrant@localhost -X -p 2222 -i ./.vagrant/machines/default/virtualbox/private_key
 
 # on the vagrant guest, execute a test program
 xeyes
@@ -462,101 +474,7 @@ Sources:
 >You can use the same file and commands to build an image on AWS, Digital Ocean VirtualBox and Vagrant.
 >This makes it possible to use exactly the same system for development which you then create in production.
 
-
-
-
-############################# NOT NEEDED #######################################
-### Step X: Installing Packer
-Packer is likely to be the least fimilar of the required tools,
-so here is a short installation tutorial ([source][26]).
-Packer may be installed from a pre-compiled binary or from source.
-The easy and recommended method for all users is binary installation method.
-Check the latest release of Packer on the [Downloads page][19].
-Then download the recent version for your platform.
-In my case:
-
-```bash
-# download version 1.5.1  for ubuntu
-cd ~/tmp
-export VER="1.5.1"
-wget https://releases.hashicorp.com/packer/${VER}/packer_${VER}_linux_amd64.zip
-
-# uncompress the download file
-unzip packer_${VER}_linux_amd64.zip
-
-# move the packer binary into your path
-sudo mv packer /usr/local/bin
-
-# verify the install is working
-$ packer --help
-Usage: packer [--version] [--help] <command> [<args>]
-
-Available commands are:
-    build       build image(s) from template
-    console     creates a console for testing variable interpolation
-    fix         fixes templates from old versions of packer
-    inspect     see components of a template
-    validate    check that a template is valid
-    version     Prints the Packer version
-```
-
-Packer uses builders (sometimes called a template)
-to generate images and create machines for various platforms from templates.
-A builder is a configuration file used to define what image is built and its format is JSON.
-You can see a [full list of supported builders and their templates][22].
-A builder has the following three main parts.
-
-1. **variables** – Where you define custom variables.
-2. **builders** – Where you mention all the required builder parameters.
-3. **provisioners** – Where you can integrate a shell script,
-ansible play or a chef cookbook for configuring a required application.
-
-## Step 6: Build the Vagrant Box Using Packer
-Now, start the build process using Packer to create a Vagrant box:
-
-```bash
-# build the vagrant box using purchased physical version of ms windows 10 pro
-packer build --only=virtualbox-iso -var 'iso_url=./iso/windows-10-pro-020120.iso' -var 'iso_checksum=5a8969afcf5c49faf3d8f7f0bddfd5517453248dec47f125a61c93f538d08625' windows_10.json
-
-# OR - assuming you updated the script
-#./build_windows_10.sh
-```
-
-The building of the Windows 10 OS will take several hours (its Microsoft after all).
-You'll know when the Packer build is complete when the script terminate
-and trace messages  are no long printed.
-
->**NOTE:** Early in the boot-up of the VirtualBox,
->I get prompted for "Select the operating system you want to install"
->and a menu from the MS Windows install script.
->Appears there is a missing response in the
->`~/src/vagrant-machines/ms-windows/answer_files/10` file.
-
-## Step 7: Build the Vagrant Box
-Now that `packer` has completed building the box,
-next we want to make this box available for use by adding it to our list of available boxes.
-The follow commands adds the new box to the list of currently available boxes.
-
-```bash
-# install the vagrant box in your local repository
-#vagrant box add windows10base ./windows_10_virtualbox.box
-vagrant box add --name windows10base ./windows_10_virtualbox.box
-
-# check to see the box is in the local repository
-vagrant box list
-
-# remove the built box now that its in the repository
-rm windows_10_virtualbox.box
-```
-
-Now you have the box and you can use it like any other box
-by referencing it in a `Vagrantfile` for a new build.
-
-If you wise to remove the box from the local repository,
-use the command `vagrant box remove windows10base`.
-############################# NOT NEEDED #######################################
-
-## Step 1: Build You Box Using Vagrant - DONE
+## Step 1: Build You Box Using Vagrant
 First step is to create your box destine to become your new base box via Vagrant.
 The Vagrantfile used to create it is in this repository.
 
@@ -586,7 +504,7 @@ cat /dev/null > ~/.bash_history && history -c
 sudo shutdown -h now
 ```
 
-## Step X: Repackage the VM into a New Vagrant Base Box
+## Step 2: Repackage the VM into a New Vagrant Base Box
 We are going to repackage the server we just created into a new Vagrant Base Box.
 
 ```bash
@@ -612,7 +530,7 @@ by referencing it in a `Vagrantfile` for a new build.
 If you wise to remove the box from the local repository,
 use the command `vagrant box remove ubuntu-desktop`.
 
-## Step X: Test the Build
+## Step 3: Test the Build
 Now lets test if the newly created Vagrant box in fact works.
 You can login into the VM using “vagrant” as user name and “vagrant” as a password,
 but first we need to initialize our test environment:
@@ -650,23 +568,3 @@ vagrant up
 [18]:https://app.vagrantup.com/boxes/search
 [19]:https://packer.io/downloads.html
 [20]:https://www.packer.io/intro/why.html
-[21]:
-[22]:
-[23]:
-[24]:
-[25]:
-[26]:
-[27]:
-[28]:
-[29]:
-[30]:
-[31]:
-[32]:
-[33]:
-[34]:
-[35]:
-[36]:
-[37]:
-[38]:
-[39]:
-[40]:

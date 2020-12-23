@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 # Maintainer:   jeffskinnerbox@yahoo.com / www.jeffskinnerbox.me
-# Version:      0.0.6
+# Version:      0.0.7
 
 
 # Vagrantfile API/syntax version.  The "2" is the Vagrant configuration version.
@@ -14,8 +14,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Every Vagrant development environment requires a box
   # You can search for boxes at https://vagrantcloud.com/search
   #config.vm.box = "ubuntu/xenial64"          # ubuntu 16.04 guest vm
+  #config.vm.box = "ubuntu/bionic64"          # ubuntu 18.04 guest vm
   #config.vm.box = "ubuntu/eoan64"            # ubuntu 19.10 guest vm
-  config.vm.box = "ubuntu/bionic64"          # ubuntu 18.04 guest vm
+  config.vm.box = "ubuntu/focal64"           # ubuntu 20.04 guest vm
   config.vm.hostname = "ubuntu-desktop.vm"   # set hostname
 
   # set the disk size to be allocated
@@ -214,7 +215,7 @@ SHELL
   # ----------------- install your development tools (as root) -----------------
   config.vm.provision "shell", name: "install your development tools (as root)", run: "once", inline: <<-SHELL
     # general development tools
-    apt-get -y install gnome-terminal jq markdown vim screen
+    apt-get -y install gnome-terminal jq markdown vim-gtk3 screen
 
     # software version control tools
     apt-get -y install git git-lfs
@@ -247,39 +248,39 @@ SHELL
     # python 3 development libraries including TK and GTK GUI support
     apt-get -y install python3-dev python3-tk python-imaging-tk
     apt-get -y install libgtk-3-dev libboost-all-dev
+    apt-get -y install python3-widgetsnbextension python3-testresources
     apt-get -y install build-essential cmake
+    apt-get -y install python3-pip
 SHELL
 
-  # ----------- install your python tools and libraries (as vagrant) -----------
+  # ------------ create your python working environment (as vagrant) -----------
   config.vm.provision "shell", name: "create your python working environment (as vagrant)", run: "once", inline: <<-SHELL
     # become the vagrant user and load profile
     su --login vagrant --shell /bin/bash <<'EOF'
 
-    # by default, non-interactive bash executions do not load ~/.bashrc
-    source ~/.bashrc
-
-    # install pip
-    wget https://bootstrap.pypa.io/get-pip.py
-    python3 get-pip.py
-    rm get-pip.py
-    export PATH="$HOME/.local/bin:$PATH"                # also in .bashrc but needed here
-
     # install virtual environment tools
-    pip3 install virtualenv virtualenvwrapper
+    pip3 install virtualenvwrapper
 
     # setup environment for virtualenv and virtualenvwrapper
     mkdir ~/.virtualenvs
-    export WORKON_HOME=\$HOME/.virtualenvs              # also in .bashrc but needed here
-    export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3    # also in .bashrc but needed here
-    source $HOME/.local/bin/virtualenvwrapper.sh        # also in .bashrc but needed here
 
-    # do pyenv install and setup environment
+    # my bash shell doesn't load ~/.bashrc for non-interactive executions, do manually if you plan to use
+    export PATH=$HOME/.local/bin:$PATH                                 # must also be in ~/.bashrc
+    export WORKON_HOME=$HOME/.virtualenvs                              # must also be in ~/.bashrc
+    export PROJECT_HOME=$HOME/Devel                                    # must also be in ~/.bashrc
+    export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3                   # must also be in ~/.bashrc
+    export VIRTUALENVWRAPPER_VIRTUALENV=$HOME/.local/bin/virtualenv    # must also be in ~/.bashrc
+    source $HOME/.local/bin/virtualenvwrapper.sh                       # must also be in ~/.bashrc
+
+    # install pyenv
     git clone https://github.com/pyenv/pyenv.git ~/.pyenv
-    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc     # already in my .bashrc but here just in case
-    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc  # already in my .bashrc but here just in case
+    
+    # initialize pyenv environment if you plan to use
+    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc                # must also be in ~/.bashrc
+    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc             # must also be in ~/.bashrc
 
     # do pyenv intitalize
-    $HOME/.pyenv/bin/pyenv install 3.8.3                # install python 3.8.3 (ubuntu 16.04 comes with 3.5.0)
+    $HOME/.pyenv/bin/pyenv install 3.7.5                # install python 3.7.5 (ubuntu 18.04 comes with 3.6.9)
     $HOME/.pyenv/bin/pyenv rehash                       # to assure the pyenv shims are updated
 EOF
 SHELL
